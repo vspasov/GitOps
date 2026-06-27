@@ -26,7 +26,18 @@ jobs:
       run: pytest -v
     
     - name: Create GitHub Release
-      uses: actions/create-release@v1
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.repos.createRelease({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            tag_name: context.ref,
+            name: `Release ${context.ref}`,
+            body: 'This is an automated release triggered by tag push.\n\nRun: `python script.py`\nTests: `pytest`',
+            draft: false,
+            prerelease: false
+          })
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
